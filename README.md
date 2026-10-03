@@ -1,6 +1,6 @@
 # Cover Letter Agent
 
-A command-line application that turns a job description, your CV, and your writing guidance into an English cover letter. It uses LangGraph to analyse the job, check whether essential facts are missing, prepare an evidence-based outline, draft the letter, and save Markdown and PDF copies. The prompts and interactive questions are in Chinese; the final letter is in English.
+A command-line application that turns a job description, your CV, and your writing guidance into an English cover letter. Its LangGraph workflow can pause for human input, re-evaluate the evidence after each answer, then prepare an outline, draft the letter, and save Markdown and PDF copies. The prompts and interactive questions are in Chinese; the final letter is in English.
 
 This repository contains **blank input templates**. You must supply your own CV, letter guidance, job description, and model credentials before a full run. The model provider must offer an OpenAI-compatible chat API with JSON Schema structured output and support the `enable_thinking` request parameter used by this project.
 
@@ -61,11 +61,25 @@ The check still requires the three model settings. It does not verify that the r
 
 1. **Analyse the job:** extract its role, company, duties, required skills, and preferred skills.
 2. **Evaluate the evidence:** compare the job with your CV, examples, and letter guidance. The agent normally proceeds. It asks for a missing fact only when a truthful, relevant letter cannot otherwise be written.
-3. **Prepare an outline:** select relevant evidence and record how it supports each part of the letter.
-4. **Generate the English letter:** use the outline and original inputs to check factual claims and polish the wording.
-5. **Save files:** write `cover_letter.md` and `cover_letter.pdf` from the same text.
+3. **Pause for human input when needed:** show the specific gap and question in the terminal, then wait for your answer.
+4. **Re-evaluate after an answer:** add the answer to the evidence and run evaluation again. The agent may ask one more necessary question, up to two rounds in total.
+5. **Prepare an outline:** select relevant evidence and record how it supports each part of the letter.
+6. **Generate the English letter:** use the outline and original inputs to check factual claims and polish the wording.
+7. **Save files:** write `cover_letter.md` and `cover_letter.pdf` from the same text.
 
-If prompted for more information, type an answer and press Enter. An empty answer continues with the available evidence. There are at most two rounds of questions. Interactive progress is kept in memory for the current process only; restarting begins a new run.
+### Human-in-the-loop decision path
+
+```mermaid
+flowchart LR
+    A[Analyse job] --> E[Evaluate evidence]
+    E -- Ready or two answers used --> P[Prepare outline]
+    E -- Essential gap, under two rounds --> H[Ask for human input]
+    H -- Non-empty answer --> E
+    H -- Empty answer --> P
+    P --> G[Generate letter] --> S[Save Markdown and PDF]
+```
+
+The graph pauses with LangGraph `interrupt()` and resumes with your terminal answer. A non-empty answer triggers a fresh evaluation using all previous answers; an empty answer skips re-evaluation and continues with the existing facts. After two answers, the workflow continues even if a gap remains, omitting unsupported claims. Checkpoints are held in memory for the current process only, so restarting begins a new run.
 
 Each attempt gets a separate directory under `output/`. It contains the original `jd.txt`, `run.json`, `run.log`, token usage, and, after success, `final_state.json`, `cover_letter.md`, and `cover_letter.pdf`. `final_state.json` contains the raw job description, CV, examples, answers, and generated text. Treat the entire directory as private. A failure can leave diagnostic and usage files without final outputs. A forced stop can leave `run.json` marked `running`.
 
