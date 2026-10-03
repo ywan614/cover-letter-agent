@@ -1,0 +1,17 @@
+.venv/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+.DS_Store
+
+# Private inputs and generated files
+config.ini
+src/template.py
+data/jd.py
+output/
+outputs/
+log/
+logs/
+*.log
+.env
+.env.*

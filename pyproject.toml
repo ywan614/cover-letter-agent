@@ -1,0 +1,16 @@
+[project]
+name = "cover-letter-agent"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "langchain-openai>=1.6.3",
+    "langgraph>=1.2.12",
+    "reportlab>=5.0.1",
+]
+
+[dependency-groups]
+dev = [
+    "pypdf>=6.19.0",
+]

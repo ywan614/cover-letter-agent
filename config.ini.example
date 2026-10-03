@@ -1,0 +1,25 @@
+[openai]
+OPENAI_API_KEY =
+
+[langsmith]
+LANGSMITH_API_KEY =
+
+[postgres]
+POSTGRES_URI =
+
+[sandbox]
+SANDBOX_ID =
+
+[logging]
+LOG_DIR =
+LOG_FILE_NAME =
+LOG_LEVEL =
+LOG_MAX_BYTES =
+LOG_BACKUP_COUNT =
+LOG_VALUE_MAX_LENGTH =
+LOG_CONSOLE =
+
+[model]
+TIMEOUT_SECONDS =
+MODEL_NAME =
+MODEL_BASE_URL =

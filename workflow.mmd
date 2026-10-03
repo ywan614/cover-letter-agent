@@ -1,0 +1,14 @@
+flowchart TD
+    START([START]) --> init["读取 JD 并初始化 state"]
+    init --> analyze["analyze_jd: 分析 JD"]
+    analyze --> evaluate["evaluate: 评估是否需要额外材料"]
+    evaluate --> decision{"missing_info 且补充少于两轮？"}
+    decision -->|是| human["human_input: interrupt 等待补充"]
+    decision -->|否| prepare["prepare: 按模板整理材料"]
+    human --> answer{"Command resume: 回答是否空白？"}
+    answer -->|否| evaluate
+    answer -->|是| prepare
+    prepare --> generate["generate_output: 生成英文正文"]
+    generate --> save["save_output: Markdown 和 PDF"]
+    save --> END([END])
+    %% prepare、generate_output、save_output 待实现。
